@@ -1,0 +1,37 @@
+
+GET all songs
+curl http://localhost/songs
+
+GET song by ID
+curl http://localhost/songs/1
+
+POST new song (secure)
+curl -X POST http://localhost/songs ^
+-H "Authorization: Bearer 1234567890abcdef" ^
+-F "title=MySong" ^
+-F "artist=MyArtist" ^
+-F "genre=Pop" ^
+-F "file=@C:\Users\ctpen\Desktop\project1\uploads\song.mp3"
+
+PUT song (secure)
+curl -X PUT http://localhost/songs/1 ^
+-H "Authorization: Bearer 1234567890abcdef" ^
+-d "title=UpdatedSong&artist=NewArtist&genre=Rock"
+
+DELETE song (secure)
+curl -X DELETE http://localhost/songs/1 ^
+-H "Authorization: Bearer 1234567890abcdef"
+
+GET songs by artist
+curl http://localhost/songs/artist/MyArtist
+
+GET songs by genre
+curl http://localhost/songs/genre/Pop
+
+POST comment
+curl -X POST http://localhost/songs/1/comment ^
+-H "Content-Type: application/json" ^
+-d "{\"comment\":\"Great song!\"}"
+
+GET song by title
+curl http://localhost/songs/title/MySong

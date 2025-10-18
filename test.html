@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Song API Tester</title>
+  <style>
+    body { font-family: monospace; background: #fafafa; padding: 20px; }
+    button { margin: 4px; padding: 6px 10px; }
+    input { margin: 4px; }
+    pre { background: #eee; padding: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h2>Song API Tester</h2>
+
+  <div>
+    <input id="fileInput" type="file" accept="audio/*">
+    <button onclick="postSong()">POST New Song</button>
+    <hr>
+    <button onclick="getAll()">GET All Songs</button>
+    <button onclick="getById()">GET Song by ID</button>
+    <button onclick="putSong()">PUT Update Song</button>
+    <button onclick="deleteSong()">DELETE Song</button>
+    <button onclick="getByArtist()">GET by Artist</button>
+    <button onclick="getByGenre()">GET by Genre</button>
+    <button onclick="postComment()">POST Comment</button>
+    <button onclick="getByTitle()">GET by Title</button>
+  </div>
+
+  <pre id="output">Ready.</pre>
+
+  <script>
+    const API_BASE = "http://localhost/api/songs.php";
+    const TOKEN = "1234567890abcdef";
+    const output = document.getElementById("output");
+
+    async function request(url, options = {}) {
+      try {
+        const res = await fetch(url, options);
+        const text = await res.text();
+        output.textContent = text;
+      } catch (e) {
+        output.textContent = e.toString();
+      }
+    }
+
+    function getAll() {
+      request(API_BASE + "?path=songs");
+    }
+
+    function getById() {
+      request(API_BASE + "?path=songs/1");
+    }
+
+    function postSong() {
+      const fileInput = document.getElementById("fileInput");
+      if (!fileInput.files.length) {
+        output.textContent = "Select an audio file first.";
+        return;
+      }
+
+      const form = new FormData();
+      form.append("title", "MySong");
+      form.append("artist", "MyArtist");
+      form.append("genre", "Pop");
+      form.append("file", fileInput.files[0]);
+
+      request(API_BASE + "?path=songs", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + TOKEN },
+        body: form
+      });
+    }
+
+    function putSong() {
+      const body = new URLSearchParams({
+        title: "UpdatedSong",
+        artist: "NewArtist",
+        genre: "Rock"
+      });
+      request(API_BASE + "?path=songs/1", {
+        method: "PUT",
+        headers: { "Authorization": "Bearer " + TOKEN },
+        body
+      });
+    }
+
+    function deleteSong() {
+      request(API_BASE + "?path=songs/1", {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + TOKEN }
+      });
+    }
+
+    function getByArtist() {
+      request(API_BASE + "?path=songs/artist/MyArtist");
+    }
+
+    function getByGenre() {
+      request(API_BASE + "?path=songs/genre/Pop");
+    }
+
+    function postComment() {
+      request(API_BASE + "?path=songs/1/comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment: "Great song!" })
+      });
+    }
+
+    function getByTitle() {
+      request(API_BASE + "?path=songs/title/MySong");
+    }
+  </script>
+</body>
+</html>
