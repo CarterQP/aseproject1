@@ -142,6 +142,6 @@ if ($method === 'GET' && isset($request[1]) && $request[1] === 'title' && isset(
     exit;
 }
 
-// Fallback
+// Just in case
 http_response_code(404);
 echo json_encode(["message" => "No Endpoint"]);
